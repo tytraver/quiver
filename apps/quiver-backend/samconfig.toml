@@ -5,7 +5,7 @@ version = 0.1
 
 [default]
 [default.global.parameters]
-stack_name = "quiver-backend-login"
+stack_name = "quiver-backend"
 
 [default.build.parameters]
 cached = true

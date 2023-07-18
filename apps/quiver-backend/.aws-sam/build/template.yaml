@@ -1,26 +1,44 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: 'quiver-backend-login
+Description: 'quiver-backend
 
   '
 Globals:
   Function:
     Timeout: 3
 Resources:
-  HelloWorldFunction:
+  LoginFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: HelloWorldFunction
+      CodeUri: LoginFunction
       Handler: app.lambdaHandler
       Runtime: nodejs18.x
       Architectures:
       - x86_64
+      Environment:
+        Variables:
+          JWT_SECRET: superdupersecret
       Events:
-        HelloWorld:
-          Type: Api
+        HealthCheck:
+          Type: HttpApi
           Properties:
-            Path: /hello
+            Path: /health
             Method: get
+        Register:
+          Type: HttpApi
+          Properties:
+            Path: /register
+            Method: post
+        Login:
+          Type: HttpApi
+          Properties:
+            Path: /login
+            Method: post
+        Verify:
+          Type: HttpApi
+          Properties:
+            Path: /verify
+            Method: post
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -29,21 +47,21 @@ Resources:
         Minify: true
         Sourcemap: false
         Target: es2020
-      SamResourceId: HelloWorldFunction
+      SamResourceId: LoginFunction
 Outputs:
-  HelloWorldApi:
+  LoginApi:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
     Value:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
-  HelloWorldFunction:
+  LoginFunction:
     Description: Hello World Lambda Function ARN
     Value:
       Fn::GetAtt:
-      - HelloWorldFunction
+      - LoginFunction
       - Arn
-  HelloWorldFunctionIamRole:
+  LoginFunctionIamRole:
     Description: Implicit IAM Role created for Hello World function
     Value:
       Fn::GetAtt:
-      - HelloWorldFunctionRole
+      - LoginFunctionRole
       - Arn
