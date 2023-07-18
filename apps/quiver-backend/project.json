@@ -1,0 +1,89 @@
+{
+  "name": "quiver-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/quiver-backend/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/quiver-backend",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/quiver-backend/src/main.ts",
+        "tsConfig": "apps/quiver-backend/tsconfig.app.json",
+        "assets": ["apps/quiver-backend/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "quiver-backend:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "quiver-backend:build:development"
+        },
+        "production": {
+          "buildTarget": "quiver-backend:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/quiver-backend/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/quiver-backend/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "serve-functions": {
+      "command": "sam build && sam local start-api",
+      "options": {
+        "cwd": "apps/quiver-backend"
+      }
+    },
+    "deploy-functions": {
+      "command": "sam build && sam deploy --guided",
+      "options": {
+        "cwd": "apps/quiver-backend"
+      }
+    }
+  },
+  "tags": []
+}
